@@ -15,27 +15,44 @@ foodImg.src = "img/food.png";
 const assetsImg = new Image();
 assetsImg.src = "img/money.png";
 
+const dogImg = new Image();
+dogImg.src = "img/dog.png";
+
+const tvImg = new Image();
+tvImg.src = "img/tv.png";
+
+
 
 // create the snake
 
 let snake = [];
 
 snake[0] = {
-    x : 9 * box,
-    y : 10 * box
+    x : 17 * box,
+    y : 5 * box
 };
 
 // create the food
 
 let food = {
-    x : Math.floor(Math.random()*17+1) * box,
-    y : Math.floor(Math.random()*15+3) * box
+    x : 3 * box,
+    y : 10 * box
 }
 
 let assets = {
-    x : Math.floor(Math.random()*17+1) * box,
-    y : Math.floor(Math.random()*15+3) * box
+    x : 3 * box,
+    y : 4 * box
 }
+let dog = {
+    x : 14 * box,
+    y : 12 * box
+}
+
+let tv = {
+    x : 8 * box,
+    y : 12 * box
+}
+
 
 
 // create the score var
@@ -72,10 +89,43 @@ function collision(head,array){
 }
 
 function collisionWalls(head){
-    if((head.y<=6*box && head.y>=3*box && head.x==6*box)||(head.y<=5*box && head.y>=3*box && head.x==13*box)||(head.y==5*box && head.x==14*box) || (head.y>=9*box && head.y<=12*box && head.x==6*box) || (head.x>=2*box && head.x<=10*box && head.y==13*box)){
+    if((head.y<=6*box && head.y>=3*box && head.x==6*box)||(head.y<=5*box && head.y>=3*box && head.x==13*box) || (head.y>=9*box && head.y<=12*box && head.x==6*box) || (head.x>=2*box && head.x<=10*box && head.y==13*box)|| (head.y==5*box && head.x==14*box)){
     return true;
     }
     return false;
+}
+
+// police move func
+function dogMove(dog) {
+let move = Math.floor(Math.random()*4);
+   if(move == 1){
+        dog.x -= box;
+        if(dog.x<box || dog.x>17*box || collisionWalls(dog)){
+            dog.x +=box;
+            move++;
+        }
+   }
+   if(move == 2){
+        dog.y -= box;
+        if(dog.y<3*box || dog.y>17*box || collisionWalls(dog)){
+            dog.y +=box;
+            move++;
+        }
+
+   }
+   if(move == 3){
+        dog.x += box;
+        if(dog.x<box || dog.x>17*box || collisionWalls(dog)){
+            dog.x -=box;
+            move++;
+        }
+   }
+   if(move == 4){
+        dog.y += box;
+        if(dog.y<3*box || dog.y>17*box || collisionWalls(dog)){
+            dog.y -=box;
+        }
+    }
 }
 
 // draw everything to the canvas
@@ -87,6 +137,9 @@ function draw(){
     for( let i = 0; i < snake.length ; i++){
         ctx.fillStyle = ( i == 0 )? "green" : "white";
         ctx.fillRect(snake[i].x,snake[i].y,box,box);
+        ctx.fillStyle = "white";
+        ctx.font = "15px Changa one";
+        ctx.fillText("you",snake[i].x+5,snake[i].y+22);
         
         ctx.strokeStyle = "red";
         ctx.strokeRect(snake[i].x,snake[i].y,box,box);
@@ -94,10 +147,16 @@ function draw(){
     
     ctx.drawImage(foodImg, food.x, food.y);
     ctx.drawImage(assetsImg, assets.x, assets.y);
+    ctx.drawImage(dogImg, dog.x, dog.y);
+    ctx.drawImage(tvImg, tv.x, tv.y);
     
     // old head position
     let snakeX = snake[0].x;
     let snakeY = snake[0].y;
+
+    // dog position
+    dogMove(dog);
+    
     
     // which direction
     if( d == "LEFT") snakeX -= box;
@@ -112,7 +171,7 @@ function draw(){
             x : Math.floor(Math.random()*17+1) * box,
             y : Math.floor(Math.random()*15+3) * box
         }
-        while(collisionWalls(food)){
+        if(collisionWalls(food)){
             food = {
                 x : Math.floor(Math.random()*17+1) * box,
                 y : Math.floor(Math.random()*15+3) * box
@@ -133,10 +192,18 @@ function draw(){
     }
     
     // game over
-    
-    if(snakeX < box || snakeX > 17 * box || snakeY < 3*box || snakeY > 17*box || collision(newHead,snake) || collisionWalls(newHead)){
+ 
+    if((snakeX == 0 && snakeY == 15*box) || (snakeX == 0 &&snakeY == 16*box)){
+        clearInterval(game);
+        alert("you just get away!");
+    }
+
+    else if(snakeX < box || snakeX > 17 * box || snakeY < 3*box || snakeY > 17*box || collision(newHead,snake) || collisionWalls(newHead)){
         clearInterval(game);
     }
+
+
+    
     
     snake.unshift(newHead);
     
