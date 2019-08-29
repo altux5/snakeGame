@@ -1,0 +1,498 @@
+const cvs = document.getElementById("snake");
+const ctx = cvs.getContext("2d");
+
+// create the unit
+const box = 32;
+
+// load images
+
+const ground = new Image();
+ground.src = "img/ground.png";
+
+const groundlost = new Image();
+groundlost.src = "img/groundlost.png";
+
+const foodImg = new Image();
+foodImg.src = "img/food.png";
+
+const moneyImg = new Image();
+moneyImg.src = "img/money.png";
+
+const dogImg = new Image();
+dogImg.src = "img/dog.png";
+
+const tvImg = new Image();
+tvImg.src = "img/tv.png";
+
+const phoneImg = new Image();
+phoneImg.src = "img/phone.png";
+
+const policeImg = new Image();
+policeImg.src = "img/police.png";
+
+const money1Img = new Image();
+money1Img.src = "img/money.png";
+
+const laptopImg = new Image();
+laptopImg.src = "img/laptop.png";
+
+const anahtarImg = new Image();
+anahtarImg.src = "img/key.png";
+
+
+// create the snake
+
+let snake = [];
+
+snake[0] = {
+    x : 17 * box,
+    y : 5 * box
+};
+
+// create the food
+
+let food = {
+    x : 3 * box,
+    y : 10 * box
+}
+
+let money = {
+    x : 3 * box,
+    y : 4 * box
+}
+let money1 = {
+    x : 14 * box,
+    y : 3 * box
+}
+let dog = {
+    x : 14 * box,
+    y : 12 * box
+}
+
+let tv = {
+    x : 8 * box,
+    y : 12 * box
+}
+let phone = {
+    x : 9 * box,
+    y : 3 * box
+}
+let police = {
+    x : 3 * box,
+    y : 16 * box
+}
+let laptop = {
+    x : 7 * box,
+    y : 10 * box
+}
+let anahtar = {
+    x: 16 * box ,
+    y: 3 * box
+}
+
+let isPolice = 0;
+let isMoney = true;
+let isTv = true;
+let isFood = true;
+let isMoney1 = true;
+let isPhone = true;
+let isLaptop = false;
+
+
+// create the score var
+let counter = 0;
+let score = 0;
+let aquired = 0;
+let energy = 100;
+let islocked = true;
+//control the snake
+
+let d;
+
+document.addEventListener("keydown",direction);
+
+function direction(event){
+    let key = event.keyCode;
+    if( key == 37){
+        d = "LEFT";
+    }else if(key == 38){
+        d = "UP";
+    }else if(key == 39){
+        d = "RIGHT";
+    }else if(key == 40){
+        d = "DOWN";
+    }
+}
+
+// cheack collision function
+function collision(head,array){
+    for(let i = 0; i < array.length; i++){
+        if(head.x == array[i].x && head.y == array[i].y){
+            return true;
+        }
+    }
+    return false;
+}
+
+function collisionWalls(head){
+    if((head.y<=6*box && head.y>=3*box && head.x==6*box)||(head.y<=5*box && head.y>=3*box && head.x==13*box) || (head.y>=9*box && head.y<=12*box && head.x==6*box) || (head.x>=1*box && head.x<=10*box && head.y==13*box)|| (head.y==5*box && head.x==14*box)){
+    return true;
+    }
+    return false;
+}
+
+// police move func
+function dogMove(dog) {
+
+
+
+let move = Math.floor(Math.random()*5);
+    if(snake[0].x>10*box && snake[0].x<17*box && snake[0].y>5*box && snake[0].y<14*box && !collisionWalls(dog)){
+       if(snake[0].x-dog.x>0){
+           counter++;
+           if(counter>3){
+            counter =0;
+           }
+           else{
+           dog.x+=box;
+           }
+       }
+       else if(snake[0].x-dog.x<0){
+        counter++;
+           if(counter>3){
+            counter =0;
+           }
+           else{
+           dog.x-=box;
+           }
+        
+    }
+    else if(snake[0].y-dog.y<0){
+        counter++;
+           if(counter>3){
+            counter =0;
+           }
+           else{
+           dog.y-=box;
+           }
+    }
+    else if(snake[0].y-dog.y>0){
+        counter++;
+           if(counter>3){
+            counter =0;
+           }
+           else{
+           dog.y+=box;
+           }
+    }
+    } else {
+   if(move == 1){
+        dog.x -= box;
+        if(dog.x<box || dog.x>17*box || collisionWalls(dog)){
+            dog.x +=box;
+            
+        }
+   }
+   if(move == 2){
+        dog.y -= box;
+        if(dog.y<3*box || dog.y>17*box || collisionWalls(dog)){
+            dog.y +=box;
+            
+        }
+
+   }
+   if(move == 3){
+        dog.x += box;
+        if(dog.x<box || dog.x>17*box || collisionWalls(dog)){
+            dog.x -=box;
+            
+        }
+   }
+   if(move == 4){
+        dog.y += box;
+        if(dog.y<3*box || dog.y>17*box || collisionWalls(dog)){
+            dog.y -=box;
+        }
+    }
+}
+}
+
+function policeMove(police) {
+
+
+
+    let move = Math.floor(Math.random()*5);
+        if(snake[0].x>3*box && snake[0].x<17*box && snake[0].y>13*box && snake[0].y<17*box && !collisionWalls(police)){
+           if(snake[0].y-police.y>0){
+            counter++;
+            if(counter>4){
+             counter =0;
+            }
+            else{
+            police.y+=box;
+            }
+           }
+           else if(snake[0].y-police.y<0){
+            counter++;
+           if(counter>4){
+            counter =0;
+           }
+           else{
+           police.y-=box;
+           }
+        }
+        else if(snake[0].x-police.x<0){
+            counter++;
+           if(counter>4){
+            counter =0;
+           }
+           else{
+           police.x-=box;
+           }
+        }
+        else if(snake[0].x-police.x>0){
+            counter++;
+            if(counter>4){
+             counter =0;
+            }
+            else{
+            police.x+=box;
+            }
+        }
+        } else {
+       if(move == 1){
+            police.x -= box;
+            if(police.x<box || police.x>17*box || collisionWalls(police)){
+                police.x +=box;
+                
+            }
+       }
+       if(move == 2){
+            police.y -= box;
+            if(police.y<3*box || police.y>17*box || collisionWalls(police)){
+                police.y +=box;
+                
+            }
+    
+       }
+       if(move == 3){
+            police.x += box;
+            if(police.x<box || police.x>17*box || collisionWalls(police)){
+                police.x -=box;
+                
+            }
+       }
+       if(move == 4){
+            police.y += box;
+            if(police.y<3*box || police.y>17*box || collisionWalls(police)){
+                police.y -=box;
+            }
+        }
+    }
+    }
+
+// draw everything to the canvas
+
+function draw(){
+    
+    ctx.drawImage(ground,0,0);
+    
+    for( let i = 0; i < snake.length ; i++){
+        ctx.fillStyle = ( i == 0 )? "green" : "white";
+        
+        ctx.fillRect(snake[i].x,snake[i].y,box,box);
+        ctx.fillStyle = "white";
+        ctx.font = "15px Changa one";
+        ctx.fillText("you",snake[i].x+5,snake[i].y+22);
+        
+        ctx.strokeStyle = "red";
+        ctx.strokeRect(snake[i].x,snake[i].y,box,box);
+    }
+    
+    
+    if(isTv) ctx.drawImage(tvImg, tv.x, tv.y);
+    if(isPhone) ctx.drawImage(phoneImg, phone.x, phone.y);
+    if(isFood) ctx.drawImage(foodImg, food.x, food.y);
+    if(isMoney) ctx.drawImage(moneyImg, money.x, money.y);
+    if(isMoney1) ctx.drawImage(money1Img, money1.x, money1.y);
+    if(isPolice>2) ctx.drawImage(policeImg, police.x, police.y);
+    if(score==2){
+        ctx.drawImage(laptopImg, laptop.x, laptop.y);
+        isLaptop = true;
+    } 
+    if(isPolice>3 && islocked==true){
+         ctx.drawImage(anahtarImg,anahtar.x,anahtar.y);
+    }
+    
+   
+    ctx.drawImage(dogImg, dog.x, dog.y);
+    
+    policeMove(police);
+
+    
+
+    
+    // old head position
+    let snakeX = snake[0].x;
+    let snakeY = snake[0].y;
+
+    // dog position
+    dogMove(dog);
+    
+    
+    // which direction
+    if( d == "LEFT") snakeX -= box;
+    if( d == "UP") snakeY -= box;
+    if( d == "RIGHT") snakeX += box;
+    if( d == "DOWN") snakeY += box;
+    
+    // if the snake eats the food
+    if(snakeX == food.x && snakeY == food.y){
+        energy +=30;
+        food = {
+            x : Math.floor(Math.random()*17+1) * box,
+            y : Math.floor(Math.random()*15+3) * box
+        }
+        if(collisionWalls(food)){
+            food = {
+                x : Math.floor(Math.random()*17+1) * box,
+                y : Math.floor(Math.random()*15+3) * box
+            }
+        }
+        snake.pop();
+    }else{
+        
+        snake.pop();
+    }
+    
+    if(snakeX == tv.x && snakeY == tv.y && isTv){
+        isTv = false;
+        isPolice ++;
+        score++;
+        
+    }
+
+    if(snakeX == phone.x && snakeY == phone.y && isPhone){
+        isPhone = false;
+        isPolice ++;
+        score++;
+      
+    }
+    if(snakeX == money.x && snakeY == money.y && isMoney){
+        isMoney = false;
+        isPolice ++;
+        aquired += Math.floor(Math.random()*10000);
+  
+    }
+    if(snakeX == money1.x && snakeY == money1.y && isMoney1){
+        isMoney1 = false;
+        isPolice ++;
+        aquired += Math.floor(Math.random()*10000);
+  
+    }
+    if(snakeX == laptop.x && snakeY == laptop.y && isLaptop){
+        isLaptop = false;
+        isPolice ++;
+        score++;      
+    }
+
+    if(snakeX == anahtar.x && snakeY == anahtar.y && isPolice>3){
+        islocked = false;
+    }
+
+    
+
+    // add new Head
+    
+    let newHead = {
+        x : snakeX,
+        y : snakeY
+    }
+    
+    // game over
+ 
+    if((snakeX == 0 && snakeY == 15*box) || (snakeX == 0 &&snakeY == 16*box)){
+        if(islocked==false){
+        document.querySelector('.end').innerHTML = "you just get away!"
+        document.querySelector('.earnings').innerHTML = "earnings: " + aquired + "$ and " + Math.floor(Math.random()*10000)*score + "$ from "+score +" aquired goods."
+        clearInterval(game);
+        }
+        else{
+            document.querySelector('.end').innerHTML = "you haven't found the key yet!!"
+            d="RIGHT";
+
+        }
+       
+    }
+
+    else if(snakeX < box || snakeX > 17 * box || snakeY < 3*box || snakeY > 17*box || collision(newHead,snake) || collisionWalls(newHead)){
+        document.querySelector('.end').innerHTML = "you just tossed into the wall!"
+        document.querySelector('.earnings').innerHTML = "Hours later households find you unconscious, then beat you to death!!"
+        clearInterval(game);
+    }
+
+
+    
+    
+    snake.unshift(newHead);
+
+    if(snakeX == dog.x && snakeY == dog.y){
+        document.querySelector('.end').innerHTML = "you just cought by dog!"
+        document.querySelector('.earnings').innerHTML = "you manage to get out, with lots of bitings on your leg."
+        draw();
+        clearInterval(game);
+    }
+    if(snakeX-police.x<=1 && snakeX-police.x>=-1 && snakeY-police.y<=1 && snakeY-police.y>=-1 ){
+        document.querySelector('.end').innerHTML = "you just cought by the police!"
+        document.querySelector('.earnings').innerHTML = ' "but,but, i was just looking around!" '
+        draw();
+        clearInterval(game);
+    }
+    
+    ctx.fillStyle = "white";
+    ctx.font = "45px Changa one";
+    ctx.fillText(score,8.3*box,1.6*box);
+
+    ctx.fillStyle = "white";
+    ctx.font = "45px Changa one";
+    ctx.fillText(aquired,2*box,1.6*box);
+    energy --;
+    ctx.fillStyle = "white";
+    ctx.font = "45px Changa one";
+    ctx.fillText(energy,13*box,1.6*box);
+
+    if(!islocked){
+    ctx.fillStyle = "green";
+    ctx.fillRect(0,box*15,box,2*box);
+    ctx.fillStyle = "white";
+    ctx.font = "15px Changa one";
+    ctx.fillText("door",2,20*25);
+    ctx.fillText("open",2,20*26);
+    ctx.fillStyle = "white";
+    ctx.font = "18px Changa one";
+    ctx.fillText("found",17.1*box,1.3*box);
+    
+    } else{
+    ctx.fillStyle = "red";
+    ctx.fillRect(0,box*15,box,2*box);
+    ctx.fillStyle = "white";
+    ctx.font = "15px Changa one";
+    ctx.fillText("door",2,20*25);
+    ctx.fillText("closed",1,20*26);
+    ctx.fillStyle = "red";
+    ctx.font = "18px Changa one";
+    ctx.fillText("not",17.2*box,1*box);
+    ctx.fillText("found",17.1*box,1.5*box);
+    }
+
+    
+    if(energy == 0){
+        document.querySelector('.end').innerHTML = "you are out of energy!"
+        document.querySelector('.earnings').innerHTML = "Hours later households find you unconscious, then beat you to death!!"
+        clearInterval(game);
+    }
+}
+
+// call draw function every 190 ms
+
+let game = setInterval(draw,190);
